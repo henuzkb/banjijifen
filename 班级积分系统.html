@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>班级积分系统</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background: linear-gradient(135deg, #f5f1eb 0%, #e8dcc6 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #2c3e50;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .studio-name {
+            font-size: 25px;
+            text-align: center;
+            margin: 15px 0;
+            color: #8b4513;
+            font-weight: bold;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 14px;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+            color: white;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid #e8e8e8;
+            vertical-align: middle;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+        
+        tr:hover {
+            background-color: #f0f8ff;
+            transition: background-color 0.3s ease;
+        }
+        
+        .student-id {
+            font-weight: 700;
+            color: #8b4513;
+            font-size: 14px;
+        }
+        
+        .name-input {
+            width: 80px;
+            padding: 6px 8px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 13px;
+            text-align: center;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+        
+        .name-input:focus {
+            outline: none;
+            border-color: #8b4513;
+            box-shadow: 0 0 5px rgba(139, 69, 19, 0.3);
+        }
+        
+        .score {
+            font-weight: 700;
+            font-size: 16px;
+            color: #2c3e50;
+            min-width: 30px;
+            display: inline-block;
+        }
+        
+        .score.positive {
+            color: #27ae60;
+        }
+        
+        .score.negative {
+            color: #e74c3c;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            min-width: 80px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .btn-add {
+            background-color: #27ae60;
+        }
+        
+        .btn-add:hover {
+            background-color: #229954;
+        }
+        
+        .btn-add2 {
+            background-color: #2ecc71;
+        }
+        
+        .btn-add2:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-add3 {
+            background-color: #1abc9c;
+        }
+        
+        .btn-add3:hover {
+            background-color: #16a085;
+        }
+        
+        .btn-subtract {
+            background-color: #e74c3c;
+        }
+        
+        .btn-subtract:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-subtract2 {
+            background-color: #c0392b;
+        }
+        
+        .btn-subtract2:hover {
+            background-color: #a93226;
+        }
+        
+        .btn-subtract3 {
+            background-color: #d35400;
+        }
+        
+        .btn-subtract3:hover {
+            background-color: #e67e22;
+        }
+
+        .btn-rank {
+            background-color: #3498db;
+        }
+        
+        .btn-rank:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-sort {
+            background-color: #9b59b6;
+        }
+        
+        .btn-sort:hover {
+            background-color: #8e44ad;
+        }
+
+        .btn-clear {
+            background-color: #e74c3c;
+        }
+        
+        .btn-clear:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-clear-all {
+            background-color: #d35400;
+        }
+        
+        .btn-clear-all:hover {
+            background-color: #e67e22;
+        }
+
+        .btn-export {
+            background-color: #16a085;
+        }
+        
+        .btn-export:hover {
+            background-color: #1abc9c;
+        }
+
+        .btn-batch {
+            background-color: #9b59b6;
+        }
+        
+        .btn-batch:hover {
+            background-color: #8e44ad;
+        }
+
+        .btn-excel {
+            background-color: #2ecc71;
+        }
+        
+        .btn-excel:hover {
+            background-color: #27ae60;
+        }
+
+        .btn-template {
+            background-color: #3498db;
+        }
+        
+        .btn-template:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-add-student {
+            background-color: #f39c12;
+        }
+        
+        .btn-add-student:hover {
+            background-color: #e67e22;
+        }
+
+        .btn-add-by-id {
+            background-color: #3498db;
+        }
+        
+        .btn-add-by-id:hover {
+            background-color: #2980b9;
+        }
+        
+        .stats {
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #8b4513;
+            font-weight: 700;
+        }
+
+        .batch-actions {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .batch-actions h3 {
+            margin-bottom: 15px;
+            color: #8b4513;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        #custom-alert {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            max-width: 80%;
+            text-align: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        #upload-loading {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #3498db;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+            display: none;
+        }
+
+        #id-input-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #id-input-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        #id-input-container h3 {
+            margin-bottom: 15px;
+            color: #8b4513;
+            text-align: center;
+        }
+
+        #id-input-textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            resize: none;
+            font-family: inherit;
+        }
+
+        #id-input-container button {
+            margin: 0 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateX(-50%) translateY(0); }
+            to { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 8px 5px;
+            }
+            
+            .name-input {
+                width: 60px;
+                font-size: 11px;
+            }
+            
+            .btn {
+                padding: 6px 12px;
+                font-size: 12px;
+                min-width: 60px;
+                margin: 0 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>班级积分系统</h1>
+        </div>
+        <div class="studio-name">李艳阁中原名师工作室</div>
+        <div class="content">
+            <div class="stats" id="stats">班级总人数：70人 | 数据加载中...</div>
+            
+            <div class="batch-actions">
+                <h3>批量操作</h3>
+                <button class="btn btn-template" onclick="downloadTemplate()">下载Excel模板</button>
+                <button class="btn btn-excel" onclick="document.getElementById('fileInput').click()">上传Excel</button>
+                <input type="file" id="fileInput" class="file-input" accept=".xlsx, .xls" onchange="handleExcelUpload(event)">
+                <button class="btn btn-add-by-id" onclick="showIdInputModal()">按学号加分</button>
+                <button class="btn btn-add-student" onclick="addNewStudent()">增加学号</button>
+                <button class="btn btn-rank" onclick="showRanking()">积分排行榜</button>
+                <button class="btn btn-sort" onclick="sortById()">按序号排序</button>
+                <button class="btn btn-clear" onclick="clearScores()">清空积分</button>
+                <button class="btn btn-clear-all" onclick="clearAllData()">清空所有数据</button>
+                <button class="btn btn-export" onclick="exportToExcel()">数据导出</button>
+            </div>
+            
+            <div class="table-container">
+                <table id="studentTable">
+                    <thead>
+                        <tr>
+                            <th>学号</th>
+                            <th>姓名</th>
+                            <th>积分</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                        <!-- 学生数据将通过JavaScript动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 按学号加分模态框 -->
+    <div id="id-input-modal">
+        <div id="id-input-container">
+            <h3>请输入学号（多个学号用逗号或空格分隔）</h3>
+            <textarea id="id-input-textarea" placeholder="例如: 1,3,5-8,12 或 1 3 5-8 12"></textarea>
+            <div style="text-align: center;">
+                <button class="btn btn-add" onclick="addScoreByIds(1)">+1分</button>
+                <button class="btn btn-add2" onclick="addScoreByIds(2)">+2分</button>
+                <button class="btn btn-add3" onclick="addScoreByIds(3)">+3分</button>
+                <button class="btn btn-subtract" onclick="addScoreByIds(-1)">-1分</button>
+                <button class="btn btn-subtract2" onclick="addScoreByIds(-2)">-2分</button>
+                <button class="btn btn-subtract3" onclick="addScoreByIds(-3)">-3分</button>
+                <button class="btn btn-clear" onclick="hideIdInputModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 上传中提示 -->
+    <div id="upload-loading">上传中，请稍候...</div>
+
+    <!-- 引入xlsx库用于解析和生成Excel文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+        // 初始化学生数据（70名学生）
+        function initializeStudents() {
+            let students = [];
+            for (let i = 1; i <= 70; i++) {
+                const savedStudent = localStorage.getItem(`student_${i}`);
+                if (savedStudent) {
+                    students.push(JSON.parse(savedStudent));
+                } else {
+                    students.push({
+                        id: i,
+                        name: '',
+                        score: 0
+                    });
+                }
+            }
+            return students;
+        }
+
+        // 保存学生数据到localStorage
+        function saveStudent(student) {
+            localStorage.setItem(`student_${student.id}`, JSON.stringify(student));
+        }
+
+        // 更新学生积分（支持负分）
+        function updateStudentScore(studentId, change) {
+            const students = JSON.parse(localStorage.getItem('allStudentsData') || '[]');
+            const student = students.find(s => s.id === studentId);
+            if (student) {
+                student.score += change;
+                saveStudent(student);
+                localStorage.setItem('allStudentsData', JSON.stringify(students));
+                return student;
+            }
+            return null;
+        }
+
+        // 渲染学生表格
+        function renderStudentTable() {
+            const tbody = document.getElementById('studentTableBody');
+            const students = JSON.parse(localStorage.getItem('allStudentsData') || '[]');
+            
+            if (students.length === 0) {
+                const initializedStudents = initializeStudents();
+                localStorage.setItem('allStudentsData', JSON.stringify(initializedStudents));
+                renderStudentRows(initializedStudents);
+            } else {
+                renderStudentRows(students);
+            }
+        }
+
+        // 渲染学生行
+        function renderStudentRows(students) {
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = '';
+            
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                const scoreClass = student.score > 0 ? 'positive' : student.score < 0 ? 'negative' : '';
+                const scoreText = student.score === 0 ? '0' : student.score.toString();
+                
+                row.innerHTML = `
+                    <td class="student-id">${student.id}</td>
+                    <td>
+                        <input type="text" 
+                               class="name-input" 
+                               value="${student.name}" 
+                               onchange="updateStudentName(${student.id}, this.value)"
+                               placeholder="姓名">
+                    </td>
+                    <td>
+                        <span class="score ${scoreClass}">${scoreText}</span>
+                    </td>
+                    <td>
+                        <button class="btn btn-add" onclick="changeScore(${student.id}, 1)">+1</button>
+                        <button class="btn btn-add2" onclick="changeScore(${student.id}, 2)">+2</button>
+                        <button class="btn btn-add3" onclick="changeScore(${student.id}, 3)">+3</button>
+                        <button class="btn btn-subtract" onclick="changeScore(${student.id}, -1)">-1</button>
+                        <button class="btn btn-subtract2" onclick="changeScore(${student.id}, -2)">-2</button>
+                        <button class="btn btn-subtract3" onclick="changeScore(${student.id}, -3)">-3</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            updateStats(students);
+        }
+
+        // 更新学生姓名
+        function updateStudentName(studentId, name) {
+            const students = JSON.parse(localStorage.getItem('allStudentsData') || '[]');
+            const student = students.find(s => s.id === studentId);
+            if (student) {
+                student.name = name;
+                saveStudent(student);
+                localStorage.setItem('allStudentsData', JSON.stringify(students));
+            }
+        }
+
+        // 改变学生积分
+        function changeScore(studentId, change) {
+            const student = updateStudentScore(studentId, change);
+            if (student) {
+                renderStudentTable();
+            }
+        }
+
+        // 显示积分排行榜
+        function showRanking() {
+            const students = JSON.parse(localStorage.getItem('allStudentsData') || '[]');
+            if (students.length === 0) return;
+            
+            const sortedStudents = [...students].sort((a, b) => b.score - a.score);
+            localStorage.setItem('allStudentsData', JSON.stringify(sortedStudents));
+            renderStudentTable();
+        }
+
+        // 按学号排序
+        function sortById() {
+            const students = JSON.parse(localStorage.getItem('allStudentsData') || '[]');
+            if (students.length === 0) return;
+            
+            const sortedStudents = [...students].sort((a, b) => a.id - b.id);
+            localStorage.setItem('allStudentsData', JSON.stringify(sortedStudents));
+            renderStudentTable();
+        }
+
+        // 清空所有积分（保留学生姓名和学号）
+        function clearScores() {
+            if (confirm('确定要清空所有积分吗？学生姓名和学号将保留。')) {
+                const students = JSON.parse(localStorage.getItem('allStudentsData') || '[]');
+                if (students.length === 0) return;
+                
+                students.forEach(student => {
+                    student.score = 0;
+                    saveStudent(student);
+                });
+                
+                localStorage.setItem('allStudentsData', JSON.stringify(students));
+                renderStudentTable();
+                
+                showAlert('所有积分已清空，学生信息保留！', 'success');
+            }
+        }
+
+        // 清空所有数据（包括学生信息和积分）
+        function clearAllData() {
+            if (confirm('确定要清空所有数据吗？包括所有学生信息和积分，此操作不可恢复！')) {
+                // 清除所有学生数据
+                const students = JSON.parse(localStorage.getItem('allStudentsData') || '[]');
+                students.forEach(student => {
+                    localStorage.removeItem(`student_${student.id}`);
+                });
+                
+                // 清除所有学生数据集合
+                localStorage.removeItem('allStudentsData');
+                
+                // 重新初始化学生数据
+                const initializedStudents = initializeStudents();
+                localStorage.setItem('allStudentsData', JSON.stringify(initializedStudents));
+                renderStudentTable();
+                
+                showAlert('所有数据已清空，系统已恢复初始状态！', 'success');
+            }
+        }
+
+        // 显示学号输入模态框
+        function showIdInputModal() {
+            document.getElementById('id-input-modal').style.display = 'flex';
+            document.getElementById('id-input-textarea').focus();
+        }
+
+        // 隐藏学号输入模态框
+        function hideIdInputModal() {
+            document.getElementById('id-input-modal').style.display = 'none';
+            document.getElementById('id-input-textarea').value = '';
+        }
+
+        // 按学号加分
+        function addScoreByIds(change) {
+            const input = document.getElementById('id-input-textarea').value.trim();
+            if (!input) {
+                showAlert('请输入学号', 'error');
+                return;
+            }
+
+            // 解析学号输入（支持逗号、空格分隔和范围）
+            const ids = parseIdInput(input);
+            if (ids.length === 0) {
+                showAlert('学号格式不正确', 'error');
+                return;
+            }
+
+            const students = JSON.parse(localStorage.getItem('allStudentsData') || '[]');
+            let foundCount = 0;
+            let notFoundIds = [];
+
+            ids.forEach(id => {
+                const student = students.find(s => s.id === id);
+                if (student) {
+                    student.score += change;
+                    saveStudent(student);
+                    foundCount++;
+                } else {
+                    notFoundIds.push(id);
+                }
+            });
+
+            localStorage.setItem('allStudentsData', JSON.stringify(students));
+            renderStudentTable();
+            hideIdInputModal();
+
+            let message = `成功为 ${foundCount} 名学生${change > 0 ? '加' : '减'}${Math.abs(change)}分`;
+            if (notFoundIds.length > 0) {
+                message += `\n未找到学号: ${notFoundIds.join(', ')}`;
+                showAlert(message, notFoundIds.length > 0 ? 'warning' : 'success');
+            } else {
+                showAlert(message, 'success');
+            }
+        }
+
+        // 解析学号输入（支持逗号、空格分隔和范围）
+        function parseIdInput(input) {
+            const ids = new Set();
+            
+            // 处理逗号和空格分隔
+            const parts = input.split(/[,，\s]+/);
+            
+            parts.forEach(part => {
+                part = part.trim();
+                if (!part) return;
+                
+                // 检查是否是范围格式（如1-5）
+                if (part.includes('-')) {
+                    const range = part.split('-');
+                    if (range.length === 2) {
+                        const start = parseInt(range[0]);
+                        const end = parseInt(range[1]);
+                        if (!isNaN(start) && !isNaN(end) && start <= end) {
+                            for (let i = start; i <= end; i++) {
+                                ids.add(i);
+                            }
+                        }
+                    }
+                } else {
+                    const id = parseInt(part);
+                    if (!isNaN(id)) {
+                        ids.add(id);
+                    }
+                }
+            });
+            
+            return Array.from(ids).sort((a, b) => a - b);
+        }
+
+        // 下载Excel模板
+        function downloadTemplate() {
+            // 创建示例数据
+            const templateData = [
+                { '学号': 1, '姓名': '张三' },
+                { '学号': 2, '姓名': '李四' },
+                { '学号': 3, '姓名': '王五' },
+                { '学号': 4, '姓名': '赵六' },
+                { '学号': 5, '姓名': '钱七' }
+            ];
+            
+            // 创建工作表
+            const worksheet = XLSX.utils.json_to_sheet(templateData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, '学生名单模板');
+            
+            // 生成Excel文件并下载
+            XLSX.writeFile(workbook, '班级积分系统导入模板.xlsx');
+            
+            showAlert('Excel模板下载成功！', 'success');
+        }
+
+        // 处理Excel文件上传
+        function handleExcelUpload(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                showAlert('请选择文件', 'error');
+                return;
+            }
+
+            // 检查文件类型
+            const validTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+                               'application/vnd.ms-excel'];
+            if (!validTypes.includes(file.type) && 
+                !file.name.match(/\.(xlsx|xls)$/i)) {
+                showAlert('请上传有效的Excel文件(.xlsx或.xls)', 'error');
+                resetFileInput();
+                return;
+            }
+
+            // 检查文件大小（限制为5MB）
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            if (file.size > maxSize) {
+                showAlert('文件大小不能超过5MB', 'error');
+                resetFileInput();
+                return;
+            }
+
+            // 显示上传中提示
+            document.getElementById('upload-loading').style.display = 'block';
+
+            const reader = new FileReader();
+            
+            // 处理读取成功
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    // 检查是否有工作表
+                    if (workbook.SheetNames.length === 0) {
+                        showAlert('Excel文件中没有工作表', 'error');
+                        return;
+                    }
+                    
+                    // 获取第一个工作表
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    
+                    // 检查工作表是否为空
+                    if (XLSX.utils.sheet_to_json(worksheet).length === 0) {
+                        showAlert('Excel工作表中没有数据', 'error');
+                        return;
+                    }
+                    
+                    // 将工作表转换为JSON
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    processImportedData(jsonData);
+                    
+                } catch (error) {
+                    console.error('解析Excel文件出错:', error);
+                    showAlert('解析Excel文件出错，请检查文件格式', 'error');
+                } finally {
+                    // 隐藏上传中提示
+                    document.getElementById('upload-loading').style.display = 'none';
+                    resetFileInput();
+                }
+            };
+            
+            // 处理读取错误
+            reader.onerror = function() {
+                // 隐藏上传中提示
+                document.getElementById('upload-loading').style.display = 'none';
+                showAlert('读取文件失败，请重试', 'error');
+                resetFileInput();
+            };
+            
+            // 开始读取文件
+            reader.readAsArrayBuffer(file);
+        }
+
+        // 处理导入的数据
+        function processImportedData(data) {
+            if (!Array.isArray(data) || data.length === 0) {
+                showAlert('导入的数据格式不正确', 'error');
+                return;
+            }
+
+            const currentStudents = JSON.parse(localStorage.getItem('allStudentsData') || '[]');
+            const updatedStudents = [...currentStudents];
+            const existingIds = new Set(currentStudents.map(s => s.id));
+            let validCount = 0;
+            let invalidCount = 0;
+            const errorMessages = [];
+
+            // 遍历Excel数据
+            data.forEach((row, index) => {
+                try {
+                    // 尝试获取学号和姓名（支持多种列名格式）
+                    const id = parseInt(row['学号'] || row['id'] || row['ID'] || 0);
+                    const name = String(row['姓名'] || row['name'] || '').trim();
+
+                    // 验证数据
+                    if (!id || isNaN(id) || id <= 0) {
+                        throw new Error(`学号无效: ${id}`);
+                    }
+
+                    if (!name) {
+                        throw new Error('姓名为空');
+                    }
+
+                    // 检查学号是否已存在
+                    if (existingIds.has(id)) {
+                        // 更新已有学生的姓名
+                        const existingStudent = updatedStudents.find(s => s.id === id);
+                        if (existingStudent) {
+                            existingStudent.name = name;
+                            validCount++;
+                        }
+                    } else {
+                        // 添加新学生
+                        updatedStudents.push({
+                            id: id,
+                            name: name,
+                            score: 0
+                        });
+                        existingIds.add(id);
+                        validCount++;
+                    }
+                } catch (error) {
+                    errorMessages.push(`第${index + 1}行: ${error.message}`);
+                    invalidCount++;
+                }
+            });
+
+            // 按学号排序
+            updatedStudents.sort((a, b) => a.id - b.id);
+            
+            // 保存所有学生数据
+            updatedStudents.forEach(student => {
+                saveStudent(student);
+            });
+            localStorage.setItem('allStudentsData', JSON.stringify(updatedStudents));
+            
+            // 重新渲染表格
+            renderStudentTable();
+            
+            // 显示导入结果
+            let message = `成功导入 ${validCount} 条学生数据`;
+            if (invalidCount > 0) {
+                message += `，${invalidCount} 条数据无效`;
+                if (errorMessages.length > 0) {
+                    message += `\n错误详情:\n${errorMessages.join('\n')}`;
+                }
+                showAlert(message, invalidCount > 0 ? 'warning' : 'success');
+            } else {
+                showAlert(message, 'success');
+            }
+        }
+
+        // 导出数据到Excel
+        function exportToExcel() {
+            const students = JSON.parse(localStorage.getItem('allStudentsData') || '[]');
+            if (students.length === 0) {
+                showAlert('没有数据可导出！', 'error');
+                return;
+            }
+            
+            // 准备导出数据
+            const exportData = students.map(student => ({
+                '学号': student.id,
+                '姓名': student.name,
+                '积分': student.score
+            }));
+            
+            // 创建工作表
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, '班级积分表');
+            
+            // 生成Excel文件并下载
+            const date = new Date();
+            const dateStr = `${date.getFullYear()}年${date.getMonth()+1}月${date.getDate()}日`;
+            XLSX.writeFile(workbook, `班级积分表_${dateStr}.xlsx`);
+        }
+
+        // 显示提示信息
+        function showAlert(message, type = 'info') {
+            // 移除旧的提示框
+            const oldAlert = document.getElementById('custom-alert');
+            if (oldAlert) oldAlert.remove();
+            
+            // 创建提示框元素
+            const alert = document.createElement('div');
+            alert.id = 'custom-alert';
+            alert.textContent = message;
+            
+            // 根据类型设置样式
+            const typeStyles = {
+                info: { background: '#3498db', color: 'white' },
+                success: { background: '#2ecc71', color: 'white' },
+                warning: { background: '#f39c12', color: 'white' },
+                error: { background: '#e74c3c', color: 'white' }
+            };
+            
+            Object.assign(alert.style, typeStyles[type]);
+            
+            document.body.appendChild(alert);
+            
+            // 3秒后自动消失
+            setTimeout(() => {
+                alert.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => alert.remove(), 300);
+            }, 3000);
+        }
+
+        // 重置文件输入
+        function resetFileInput() {
+            const fileInput = document.getElementById('fileInput');
+            fileInput.value = '';
+        }
+
+        // 更新统计信息
+        function updateStats(students) {
+            const totalStudents = students.length;
+            const statsElement = document.getElementById('stats');
+            statsElement.textContent = `班级总人数：${totalStudents}人 | 数据已保存`;
+        }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            renderStudentTable();
+        });
+    </script>
+</body>
+</html>
